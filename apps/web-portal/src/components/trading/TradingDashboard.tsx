@@ -1,7 +1,30 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  Activity, 
+  DollarSign, 
+  BarChart3, 
+  Settings, 
+  Bell, 
+  Search,
+  Menu,
+  X,
+  ChevronDown,
+  Plus,
+  Minus,
+  Eye,
+  EyeOff,
+  LogOut,
+  User,
+  Wallet,
+  PieChart,
+  Target,
+  AlertCircle
+} from 'lucide-react';
 import { OrderForm } from './OrderForm';
 import { OrderBook } from './OrderBook';
 import { PositionTracker } from './PositionTracker';
@@ -18,270 +41,321 @@ interface TradingDashboardProps {
 }
 
 export function TradingDashboard({ className = '' }: TradingDashboardProps) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const { isConnected } = useWebSocket();
   const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
-  const [watchlist, setWatchlist] = useState(['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN']);
+  const [watchlist, setWatchlist] = useState(['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'NVDA', 'META', 'NFLX']);
   const [isLoading, setIsLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  // Mock portfolio data
+  const portfolioData = {
+    totalValue: 125430.50,
+    dayChange: 2847.32,
+    dayChangePercent: 2.32,
+    cashBalance: 15430.50,
+    buyingPower: 30861.00,
+    positions: [
+      { symbol: 'AAPL', quantity: 100, avgPrice: 150.25, currentPrice: 152.80, pnl: 255.00, pnlPercent: 1.70 },
+      { symbol: 'GOOGL', quantity: 50, avgPrice: 2800.00, currentPrice: 2850.75, pnl: 2537.50, pnlPercent: 1.81 },
+      { symbol: 'MSFT', quantity: 75, avgPrice: 320.00, currentPrice: 325.40, pnl: 405.00, pnlPercent: 1.69 }
+    ]
+  };
 
   useEffect(() => {
     // Simulate loading delay
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Please log in to access the trading platform
-          </h2>
-          <button 
-            onClick={() => window.location.href = '/login'}
-            className="btn-primary"
-          >
-            Login
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-dark-bg-primary">
         <div className="text-center">
           <div className="loading-spinner w-12 h-12 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading trading dashboard...</p>
+          <p className="text-neutral-600 dark:text-dark-text-secondary">Initializing trading platform...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${className}`}>
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className={`min-h-screen bg-neutral-50 dark:bg-dark-bg-primary ${className}`}>
+      {/* Top Navigation Bar */}
+      <header className="bg-white dark:bg-dark-bg-secondary border-b border-neutral-200 dark:border-dark-border sticky top-0 z-40">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
+            {/* Left Section */}
             <div className="flex items-center space-x-6">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Trading Dashboard
-              </h1>
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-dark-bg-tertiary transition-colors"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              
+              <div className="flex items-center space-x-4">
+                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-neutral-900 dark:text-dark-text-primary">
+                    Trading Platform
+                  </h1>
+                  <p className="text-xs text-neutral-500 dark:text-dark-text-tertiary">
+                    Professional Edition
+                  </p>
+                </div>
+              </div>
+
               <ConnectionStatus />
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                Welcome, {user?.firstName} {user?.lastName}
+
+            {/* Center Section - Search */}
+            <div className="hidden md:flex flex-1 max-w-md mx-8">
+              <div className="relative w-full">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                <input
+                  type="text"
+                  placeholder="Search symbols, news, or analysis..."
+                  className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-bg-secondary text-neutral-900 dark:text-dark-text-primary placeholder-neutral-500 dark:placeholder-dark-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                />
               </div>
-              <button
-                onClick={() => {/* Open user menu */}}
-                className="btn-ghost p-2"
-              >
-                <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                  {user?.firstName?.[0]}{user?.lastName?.[0]}
-                </div>
+            </div>
+
+            {/* Right Section */}
+            <div className="flex items-center space-x-4">
+              <button className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-dark-bg-tertiary transition-colors relative">
+                <Bell className="w-5 h-5 text-neutral-600 dark:text-dark-text-secondary" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-danger-500 rounded-full"></span>
               </button>
+
+              <div className="flex items-center space-x-3">
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-medium text-neutral-900 dark:text-dark-text-primary">
+                    {user?.firstName} {user?.lastName}
+                  </p>
+                  <p className="text-xs text-neutral-500 dark:text-dark-text-tertiary">
+                    {user?.accountType}
+                  </p>
+                </div>
+                
+                <div className="relative">
+                  <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-dark-bg-tertiary transition-colors">
+                    <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                      {user?.firstName?.[0]}{user?.lastName?.[0]}
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-neutral-500" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="p-6 space-y-6">
-        {/* Top Row - Market Data & Performance */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-        >
-          <div className="lg:col-span-2">
-            <MarketData 
-              symbols={watchlist}
-              selectedSymbol={selectedSymbol}
-              onSymbolSelect={setSelectedSymbol}
-            />
-          </div>
-          <div>
-            <PerformanceMetrics />
-          </div>
-        </motion.div>
+      <div className="flex">
+        {/* Sidebar */}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.div
+              initial={{ x: -300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-y-0 left-0 z-50 w-80 bg-white dark:bg-dark-bg-secondary border-r border-neutral-200 dark:border-dark-border lg:hidden"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-dark-border">
+                <h2 className="text-lg font-semibold text-neutral-900 dark:text-dark-text-primary">
+                  Navigation
+                </h2>
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-dark-bg-tertiary transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <nav className="p-6 space-y-2">
+                {[
+                  { id: 'overview', label: 'Overview', icon: BarChart3 },
+                  { id: 'trading', label: 'Trading', icon: Activity },
+                  { id: 'portfolio', label: 'Portfolio', icon: PieChart },
+                  { id: 'orders', label: 'Orders', icon: Target },
+                  { id: 'settings', label: 'Settings', icon: Settings },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                      activeTab === item.id
+                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
+                        : 'text-neutral-700 dark:text-dark-text-secondary hover:bg-neutral-100 dark:hover:bg-dark-bg-tertiary'
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Middle Row - Order Management */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-        >
-          <div>
-            <OrderForm 
-              symbol={selectedSymbol}
-              onSymbolChange={setSelectedSymbol}
-            />
-          </div>
-          <div>
-            <OrderBook symbol={selectedSymbol} />
-          </div>
-          <div>
-            <PositionTracker />
-          </div>
-        </motion.div>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Portfolio Summary */}
+          <div className="bg-white dark:bg-dark-bg-secondary border-b border-neutral-200 dark:border-dark-border">
+            <div className="px-6 py-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-neutral-900 dark:text-dark-text-primary">
+                  Portfolio Overview
+                </h2>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setShowBalance(!showBalance)}
+                    className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-dark-bg-tertiary transition-colors"
+                  >
+                    {showBalance ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
 
-        {/* Bottom Row - Trade History */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <TradeHistory />
-        </motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* Total Value */}
+                <div className="trading-panel">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-medium text-neutral-600 dark:text-dark-text-secondary">
+                        Total Value
+                      </p>
+                      <Wallet className="w-5 h-5 text-neutral-400" />
+                    </div>
+                    <p className="text-3xl font-bold text-neutral-900 dark:text-dark-text-primary">
+                      {showBalance ? `$${portfolioData.totalValue.toLocaleString()}` : '••••••'}
+                    </p>
+                    <div className="flex items-center mt-2">
+                      <TrendingUp className="w-4 h-4 text-success-600 mr-1" />
+                      <span className="text-sm text-success-600 font-medium">
+                        +${portfolioData.dayChange.toLocaleString()} (+{portfolioData.dayChangePercent}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cash Balance */}
+                <div className="trading-panel">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-medium text-neutral-600 dark:text-dark-text-secondary">
+                        Cash Balance
+                      </p>
+                      <DollarSign className="w-5 h-5 text-neutral-400" />
+                    </div>
+                    <p className="text-2xl font-bold text-neutral-900 dark:text-dark-text-primary">
+                      {showBalance ? `$${portfolioData.cashBalance.toLocaleString()}` : '••••••'}
+                    </p>
+                    <p className="text-sm text-neutral-500 dark:text-dark-text-tertiary mt-1">
+                      Available for trading
+                    </p>
+                  </div>
+                </div>
+
+                {/* Buying Power */}
+                <div className="trading-panel">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-medium text-neutral-600 dark:text-dark-text-secondary">
+                        Buying Power
+                      </p>
+                      <Activity className="w-5 h-5 text-neutral-400" />
+                    </div>
+                    <p className="text-2xl font-bold text-neutral-900 dark:text-dark-text-primary">
+                      {showBalance ? `$${portfolioData.buyingPower.toLocaleString()}` : '••••••'}
+                    </p>
+                    <p className="text-sm text-neutral-500 dark:text-dark-text-tertiary mt-1">
+                      With margin
+                    </p>
+                  </div>
+                </div>
+
+                {/* Day's P&L */}
+                <div className="trading-panel">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-medium text-neutral-600 dark:text-dark-text-secondary">
+                        Day's P&L
+                      </p>
+                      <TrendingUp className="w-5 h-5 text-success-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-success-600">
+                      +${portfolioData.dayChange.toLocaleString()}
+                    </p>
+                    <p className="text-sm text-success-600 mt-1">
+                      +{portfolioData.dayChangePercent}%
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Trading Area */}
+          <div className="flex-1 p-6">
+            <div className="trading-grid-3">
+              {/* Market Data & Charts */}
+              <div className="lg:col-span-2 space-y-6">
+                <MarketData 
+                  symbols={watchlist}
+                  selectedSymbol={selectedSymbol}
+                  onSymbolSelect={setSelectedSymbol}
+                />
+                <PerformanceMetrics />
+              </div>
+
+              {/* Order Form */}
+              <div>
+                <OrderForm 
+                  symbol={selectedSymbol}
+                  onSymbolChange={setSelectedSymbol}
+                />
+              </div>
+            </div>
+
+            {/* Bottom Row */}
+            <div className="mt-6 trading-grid-3">
+              <OrderBook symbol={selectedSymbol} />
+              <PositionTracker />
+              <TradeHistory />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Notifications */}
       <Notifications />
 
-      {/* Mobile Menu Toggle (if needed) */}
-      <div className="lg:hidden fixed bottom-4 right-4 z-50">
-        <button className="btn-primary rounded-full p-3 shadow-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Keyboard shortcuts overlay (hidden by default) */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="shortcuts-overlay">
-        <div className="flex items-center justify-center min-h-screen p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Keyboard Shortcuts</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span>Buy Order</span>
-                <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">Ctrl + B</kbd>
-              </div>
-              <div className="flex justify-between">
-                <span>Sell Order</span>
-                <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">Ctrl + S</kbd>
-              </div>
-              <div className="flex justify-between">
-                <span>Cancel All Orders</span>
-                <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">Ctrl + X</kbd>
-              </div>
-              <div className="flex justify-between">
-                <span>Focus Symbol Search</span>
-                <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">/</kbd>
-              </div>
-              <div className="flex justify-between">
-                <span>Show Shortcuts</span>
-                <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">?</kbd>
-              </div>
-            </div>
-            <button
-              onClick={() => document.getElementById('shortcuts-overlay')?.classList.add('hidden')}
-              className="btn-primary w-full mt-4"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <style jsx global>{`
-        /* Global keyboard shortcuts */
-        body {
-          /* Prevent default browser shortcuts from interfering */
-          user-select: none;
-        }
-        
-        /* Trading-specific styles */
-        .trading-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 1.5rem;
-        }
-        
-        .price-flash-up {
-          animation: flash-green 0.5s ease-out;
-        }
-        
-        .price-flash-down {
-          animation: flash-red 0.5s ease-out;
-        }
-        
-        @keyframes flash-green {
-          0% { background-color: rgba(34, 197, 94, 0.2); }
-          100% { background-color: transparent; }
-        }
-        
-        @keyframes flash-red {
-          0% { background-color: rgba(239, 68, 68, 0.2); }
-          100% { background-color: transparent; }
-        }
-        
-        /* High-frequency data updates optimization */
-        .market-data-table {
-          contain: layout style;
-          will-change: contents;
-        }
-        
-        .order-book-table {
-          contain: layout style;
-          will-change: contents;
-        }
-      `}</style>
+      {/* Overlay for mobile sidebar */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
-}
-
-// Keyboard shortcuts handler
-if (typeof window !== 'undefined') {
-  document.addEventListener('keydown', (e) => {
-    // Only handle shortcuts when not in an input field
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-      return;
-    }
-
-    switch (e.key) {
-      case '?':
-        e.preventDefault();
-        document.getElementById('shortcuts-overlay')?.classList.remove('hidden');
-        break;
-      case 'Escape':
-        document.getElementById('shortcuts-overlay')?.classList.add('hidden');
-        break;
-      case '/':
-        e.preventDefault();
-        // Focus symbol search input
-        const symbolInput = document.querySelector('input[placeholder*="symbol"]') as HTMLInputElement;
-        symbolInput?.focus();
-        break;
-    }
-
-    // Handle Ctrl+ shortcuts
-    if (e.ctrlKey) {
-      switch (e.key.toLowerCase()) {
-        case 'b':
-          e.preventDefault();
-          // Trigger buy order form
-          console.log('Buy order shortcut');
-          break;
-        case 's':
-          e.preventDefault();
-          // Trigger sell order form
-          console.log('Sell order shortcut');
-          break;
-        case 'x':
-          e.preventDefault();
-          // Cancel all orders
-          console.log('Cancel all orders shortcut');
-          break;
-      }
-    }
-  });
 }

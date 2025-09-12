@@ -36,6 +36,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Initialize auth state on mount
   useEffect(() => {
     const initAuth = async () => {
+      // Check if we're in the browser
+      if (typeof window === 'undefined') {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const token = localStorage.getItem('auth_token');
         if (token) {
