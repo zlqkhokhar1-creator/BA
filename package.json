@@ -1,20 +1,28 @@
 {
-  "name": "advanced-ai-powered-brokerage-trading-platform",
+  "name": "brokerage-platform",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
     "apps/*",
-    "services/*"
+    "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "test": "turbo run test",
     "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
     "lint": "turbo run lint",
-    "type-check": "turbo run type-check"
+    "clean": "turbo run clean",
+    "install:all": "npm install && npm run build:packages",
+    "build:packages": "turbo run build --filter=packages/*"
   },
   "devDependencies": {
-    "lerna": "^4.0.0",
-    "turbo": "^1.10.0"
+    "turbo": "^1.10.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "packageManager": "npm@9.0.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }
