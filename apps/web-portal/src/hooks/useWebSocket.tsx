@@ -15,6 +15,7 @@ import {
   MarketDataUpdate,
   OrderUpdate,
   PortfolioUpdate,
+  Portfolio,
   ConnectionStatus,
 } from '@/types';
 
@@ -307,7 +308,7 @@ export function useOrderUpdates() {
 // Hook for portfolio updates
 export function usePortfolioUpdates() {
   const { subscribe, unsubscribe } = useWebSocket();
-  const [portfolio, setPortfolio] = useState(null);
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
 
   useEffect(() => {
     const handlePortfolioUpdate = (data: PortfolioUpdate) => {
