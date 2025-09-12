@@ -1,0 +1,20 @@
+{
+  "name": "advanced-ai-powered-brokerage-trading-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check"
+  },
+  "devDependencies": {
+    "lerna": "^4.0.0",
+    "turbo": "^1.10.0"
+  }
+}
