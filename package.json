@@ -1,1 +1,15 @@
-{\n  "name": "advanced-ai-powered-brokerage-trading-platform",\n  "version": "1.0.0",\n  "private": true,\n  "workspaces": [\n    "packages/*"\n  ],\n  "scripts": {\n    "build": "lerna run build",\n    "test": "lerna run test"\n  },\n  "devDependencies": {\n    "lerna": "^4.0.0"\n  }\n}
+{
+  "name": "advanced-ai-powered-brokerage-trading-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build",
+    "test": "lerna run test"
+  },
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  }
+}
