@@ -1,0 +1,1 @@
+{\n  "name": "advanced-ai-powered-brokerage-trading-platform",\n  "version": "1.0.0",\n  "private": true,\n  "workspaces": [\n    "packages/*"\n  ],\n  "scripts": {\n    "build": "lerna run build",\n    "test": "lerna run test"\n  },\n  "devDependencies": {\n    "lerna": "^4.0.0"\n  }\n}
