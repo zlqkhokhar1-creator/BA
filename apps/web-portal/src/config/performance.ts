@@ -108,7 +108,9 @@ const environmentConfigs: Record<string, Partial<PerformanceConfig>> = {
     fallbackEndpoints: ['ws://localhost:8081/ws/orders'],
     monitoring: {
       enabled: true,
-      sampleRate: 1.0
+      sampleRate: 1.0,
+      reportingInterval: 1000,
+      metricsRetention: 300000
     }
   },
   
@@ -119,7 +121,9 @@ const environmentConfigs: Record<string, Partial<PerformanceConfig>> = {
     ],
     monitoring: {
       enabled: true,
-      sampleRate: 0.5
+      sampleRate: 0.5,
+      reportingInterval: 1000,
+      metricsRetention: 300000
     }
   },
 
@@ -133,7 +137,9 @@ const environmentConfigs: Record<string, Partial<PerformanceConfig>> = {
     maxConnections: 8,
     monitoring: {
       enabled: true,
-      sampleRate: 0.1
+      sampleRate: 0.1,
+      reportingInterval: 1000,
+      metricsRetention: 300000
     }
   }
 };

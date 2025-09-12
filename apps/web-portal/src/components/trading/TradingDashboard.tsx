@@ -649,229 +649,231 @@ export const TradingDashboard: React.FC = () => {
       </div>
 
       {/* Inline CSS for performance (critical CSS) */}
-      <style jsx>{`
-        .trading-dashboard {
-          display: grid;
-          grid-template-rows: auto 1fr;
-          height: 100vh;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          background: #f8f9fa;
-        }
-
-        .dashboard-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem 2rem;
-          background: white;
-          border-bottom: 1px solid #e9ecef;
-        }
-
-        .dashboard-grid {
-          display: grid;
-          grid-template-columns: 350px 1fr 300px;
-          grid-template-rows: 1fr 1fr;
-          grid-template-areas: 
-            "order market performance"
-            "order history performance";
-          gap: 1rem;
-          padding: 1rem;
-          overflow: hidden;
-        }
-
-        .order-section { grid-area: order; }
-        .market-data-section { grid-area: market; }
-        .performance-section { grid-area: performance; }
-        .history-section { grid-area: history; }
-
-        .order-section, .market-data-section, .performance-section, .history-section {
-          background: white;
-          border-radius: 8px;
-          padding: 1.5rem;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          overflow-y: auto;
-        }
-
-        .order-form .form-group {
-          margin-bottom: 1rem;
-        }
-
-        .order-form label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 600;
-        }
-
-        .order-form input, .order-form select {
-          width: 100%;
-          padding: 0.75rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 1rem;
-        }
-
-        .order-form input.error {
-          border-color: #dc3545;
-        }
-
-        .error-message {
-          color: #dc3545;
-          font-size: 0.875rem;
-          margin-top: 0.25rem;
-        }
-
-        .submit-button {
-          width: 100%;
-          padding: 1rem;
-          border: none;
-          border-radius: 4px;
-          font-size: 1.1rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .submit-button.buy {
-          background: #28a745;
-          color: white;
-        }
-
-        .submit-button.sell {
-          background: #dc3545;
-          color: white;
-        }
-
-        .submit-button:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .market-data-display .price-main {
-          font-size: 2rem;
-          font-weight: 700;
-          margin: 0.5rem 0;
-        }
-
-        .price-change.positive { color: #28a745; }
-        .price-change.negative { color: #dc3545; }
-
-        .market-stats {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0.5rem;
-          margin: 1rem 0;
-        }
-
-        .stat {
-          display: flex;
-          justify-content: space-between;
-          padding: 0.5rem;
-          background: #f8f9fa;
-          border-radius: 4px;
-        }
-
-        .order-book-content {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-        }
-
-        .order-level {
-          display: flex;
-          justify-content: space-between;
-          padding: 0.25rem;
-          font-family: monospace;
-        }
-
-        .order-level.ask { background: #ffe6e6; }
-        .order-level.bid { background: #e6ffe6; }
-
-        .metric-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0.5rem;
-        }
-
-        .metric {
-          display: flex;
-          flex-direction: column;
-          padding: 0.5rem;
-          background: #f8f9fa;
-          border-radius: 4px;
-        }
-
-        .metric label {
-          font-size: 0.875rem;
-          color: #666;
-        }
-
-        .metric span.good { color: #28a745; }
-        .metric span.warning { color: #fd7e14; }
-        .metric span.error { color: #dc3545; }
-
-        .connection-status {
-          display: flex;
-          justify-content: space-between;
-          padding: 0.5rem;
-          background: #f8f9fa;
-          border-radius: 4px;
-        }
-
-        .connection-status .connected { color: #28a745; }
-        .connection-status .disconnected { color: #dc3545; }
-
-        .order-item {
-          border: 1px solid #e9ecef;
-          border-radius: 4px;
-          padding: 0.75rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .order-header {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 0.5rem;
-        }
-
-        .order-details {
-          font-size: 0.875rem;
-          color: #666;
-          display: flex;
-          gap: 1rem;
-        }
-
-        .loading-message {
-          text-align: center;
-          padding: 3rem;
-        }
-
-        .system-status div {
-          margin: 0.5rem 0;
-          padding: 0.5rem;
-          border-radius: 4px;
-        }
-
-        .system-status .ready {
-          background: #d4edda;
-          color: #155724;
-        }
-
-        .system-status .loading {
-          background: #fff3cd;
-          color: #856404;
-        }
-
-        @media (max-width: 768px) {
-          .dashboard-grid {
-            grid-template-columns: 1fr;
-            grid-template-areas: 
-              "order"
-              "market"
-              "performance"
-              "history";
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .trading-dashboard {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
           }
-        }
-      `}</style>
+
+          .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+          }
+
+          .dashboard-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 300px;
+            grid-template-rows: 1fr 1fr;
+            grid-template-areas: 
+              "order market performance"
+              "order history performance";
+            gap: 1rem;
+            padding: 1rem;
+            overflow: hidden;
+          }
+
+          .order-section { grid-area: order; }
+          .market-data-section { grid-area: market; }
+          .performance-section { grid-area: performance; }
+          .history-section { grid-area: history; }
+
+          .order-section, .market-data-section, .performance-section, .history-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-y: auto;
+          }
+
+          .order-form .form-group {
+            margin-bottom: 1rem;
+          }
+
+          .order-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+          }
+
+          .order-form input, .order-form select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+          }
+
+          .order-form input.error {
+            border-color: #dc3545;
+          }
+
+          .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+          }
+
+          .submit-button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+
+          .submit-button.buy {
+            background: #28a745;
+            color: white;
+          }
+
+          .submit-button.sell {
+            background: #dc3545;
+            color: white;
+          }
+
+          .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+
+          .market-data-display .price-main {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+          }
+
+          .price-change.positive { color: #28a745; }
+          .price-change.negative { color: #dc3545; }
+
+          .market-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin: 1rem 0;
+          }
+
+          .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+          }
+
+          .order-book-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+          }
+
+          .order-level {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem;
+            font-family: monospace;
+          }
+
+          .order-level.ask { background: #ffe6e6; }
+          .order-level.bid { background: #e6ffe6; }
+
+          .metric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+          }
+
+          .metric {
+            display: flex;
+            flex-direction: column;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+          }
+
+          .metric label {
+            font-size: 0.875rem;
+            color: #666;
+          }
+
+          .metric span.good { color: #28a745; }
+          .metric span.warning { color: #fd7e14; }
+          .metric span.error { color: #dc3545; }
+
+          .connection-status {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+          }
+
+          .connection-status .connected { color: #28a745; }
+          .connection-status .disconnected { color: #dc3545; }
+
+          .order-item {
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+          }
+
+          .order-details {
+            font-size: 0.875rem;
+            color: #666;
+            display: flex;
+            gap: 1rem;
+          }
+
+          .loading-message {
+            text-align: center;
+            padding: 3rem;
+          }
+
+          .system-status div {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 4px;
+          }
+
+          .system-status .ready {
+            background: #d4edda;
+            color: #155724;
+          }
+
+          .system-status .loading {
+            background: #fff3cd;
+            color: #856404;
+          }
+
+          @media (max-width: 768px) {
+            .dashboard-grid {
+              grid-template-columns: 1fr;
+              grid-template-areas: 
+                "order"
+                "market"
+                "performance"
+                "history";
+            }
+          }
+        `
+      }} />
     </div>
   );
 };
