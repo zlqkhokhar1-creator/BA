@@ -1,20 +1,21 @@
 {
-  "name": "advanced-ai-powered-brokerage-trading-platform",
+  "name": "brokerage-platform",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "services/*"
+    "apps/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "test": "turbo run test",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "type-check": "turbo run type-check"
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "cd apps/web-portal && npm run dev",
+    "dev:api": "cd apps/api && npm run dev",
+    "build": "npm run build:api && npm run build:web",
+    "build:web": "cd apps/web-portal && npm run build",
+    "build:api": "cd apps/api && npm run build",
+    "install:all": "npm install && cd apps/web-portal && npm install && cd ../api && npm install"
   },
   "devDependencies": {
-    "lerna": "^4.0.0",
-    "turbo": "^1.10.0"
+    "typescript": "^5.0.0",
+    "concurrently": "^8.2.0"
   }
 }
