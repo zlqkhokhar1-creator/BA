@@ -243,7 +243,7 @@ export interface PerformanceError {
 
 // Event Types
 export interface PerformanceEvent {
-  type: 'order_executed' | 'connection_lost' | 'latency_alert' | 'error' | 'metric_update';
+  type: 'order_executed' | 'connection_lost' | 'latency_alert' | 'error' | 'metric_update' | 'performance_alert' | 'market_data_update' | 'quote_update' | 'trade_update' | 'orderbook_update' | 'market_data_connected' | 'market_data_disconnected' | 'connection_established' | 'circuit_breaker_opened' | 'failover_completed';
   data: any;
   timestamp: number;
   source: string;
